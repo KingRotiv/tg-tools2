@@ -1,0 +1,24 @@
+{
+    "python.analysis.typeCheckingMode": "basic",
+    "flake8.args": [
+        "--max-line-length=100",
+        "--extend-select=B950",
+        "--extend-ignore=E203,E501,E701",
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        },
+    },
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+}

@@ -1,0 +1,26 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+*.spec
+
+# Virtual environments
+.venv
+
+# Tinydb
+config.json
+
+# pytest
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Test mode
+.test_mode/
+*.test_mode

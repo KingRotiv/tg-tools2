@@ -1,0 +1,118 @@
+name: Release CLI (Python + UV + Multi-OS)
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar UV
+        uses: astral-sh/setup-uv@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências e PyInstaller
+        run: |
+          uv sync --extra tgcrypto --no-dev
+          uv add pyinstaller
+
+      # -------------------------------------------------------
+      # Linux: Build do pacote (wheel + sdist)
+      # -------------------------------------------------------
+      - name: Build wheel + sdist (somente Linux)
+        if: runner.os == 'Linux'
+        run: uv build
+
+      # -------------------------------------------------------
+      # Linux: Build binário usando entrypoint real
+      # -------------------------------------------------------
+      - name: Build binário Linux
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          ENTRYPOINT=$(uv run python -c "import shutil; print(shutil.which('tg-tools'))")
+          echo "Entry point localizado em: $ENTRYPOINT"
+          uv pip install -e .
+          uv run pyinstaller --onefile --collect-all pyfiglet --name tg-tools "$ENTRYPOINT"
+          mkdir -p dist-bin
+          mv dist/tg-tools dist-bin/tg-tools
+
+      # -------------------------------------------------------
+      # Windows: Build binário usando entrypoint da venv
+      # -------------------------------------------------------
+      - name: Build binário Windows
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          .\.venv\Scripts\activate
+          uv pip install -e .
+          uv run pyinstaller --onefile --collect-all pyfiglet --name tg-tools run.py
+
+          New-Item -ItemType Directory -Force -Path dist-bin | Out-Null
+          Move-Item -Path "dist\tg-tools.exe" -Destination "dist-bin\tg-tools.exe"
+
+      # -------------------------------------------------------
+      # Upload artifacts (diferentes por OS)
+      # -------------------------------------------------------
+
+      # Linux envia: wheel + sdist + tg-tools
+      - name: Upload artifacts (Linux)
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tg-tools-linux
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
+            dist-bin/tg-tools
+
+      # Windows envia: tg-tools.exe
+      - name: Upload artifacts (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tg-tools-windows
+          path: |
+            dist-bin/tg-tools.exe
+
+
+  # -------------------------------------------------------
+  # JOB FINAL — cria o Release real
+  # -------------------------------------------------------
+  release:
+    name: Publicar Release
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Baixar artefatos
+        uses: actions/download-artifact@v4
+        with:
+          path: ./release_files
+
+      - name: Criar Release e enviar binários
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            release_files/**/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
