@@ -114,5 +114,6 @@ jobs:
           files: |
             release_files/**/*
           generate_release_notes: true
+          draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
