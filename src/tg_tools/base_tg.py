@@ -1,5 +1,6 @@
 from hydrogram import Client
 
+from tg_tools.config import console
 from tg_tools.exceptions import TGToolsError
 
 
@@ -19,5 +20,6 @@ class BaseTG:
         try:
             async with self.client:
                 await self.client.get_chat(chat_id)
+                console.log(f"[green]Chat verificado! ID: {chat_id}[/green]")
         except Exception as e:
             raise TGToolsError(f"Erro ao verificar chat! Erro {e}")
