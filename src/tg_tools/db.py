@@ -9,8 +9,8 @@ class DBManager:
         # Cria o banco de dados no usuário
         data_dir = Path(os.path.expanduser("~"), ".tg-tools")
         data_dir.mkdir(exist_ok=True)
-        db_full_path = Path(data_dir, db_file)
-        self.db = TinyDB(db_full_path)
+        self.db_full_path = Path(data_dir, db_file)
+        self.db = TinyDB(self.db_full_path)
         self.config_table = self.db.table("config")
 
     def set_config(self, key: str, value: str) -> None:

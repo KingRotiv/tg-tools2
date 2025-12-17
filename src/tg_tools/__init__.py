@@ -102,6 +102,11 @@ async def init() -> None:
         action="store_true",
         help="Cria uma nova sessão e a configura.",
     )
+    parser.add_argument(
+        "--get-db-file",
+        action="store_true",
+        help="Obtém o caminho do arquivo do banco de dados.",
+    )
     subparsers = parser.add_subparsers(dest="command")
 
     get_parser = subparsers.add_parser("get", help="Obtém o valor de uma configuração.")
@@ -289,6 +294,10 @@ async def init() -> None:
             console.print(
                 "Sessão já existente! Para criar outra, remova a atual primeiro."
             )
+
+    elif args.get_db_file:
+        cli = CLI()
+        console.print(f"Localização do banco de dados -> {cli.db.db_full_path}")
 
     elif args.command == "set":
         try:
