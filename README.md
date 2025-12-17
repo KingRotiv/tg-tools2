@@ -111,11 +111,15 @@ O projeto usa:
 
 ### **1. Upload de vídeos (userbot)**
 
+Envia todos os vídeos da pasta atual para o chat id informado.
+
 ```bash
 tg-tools upload-media . -100111111 video
 ```
 
 ### **2. Upload de qualquer arquivo**
+
+Envia todos os arquivos da pasta atual para o chat id informado.
 
 ```bash
 tg-tools upload-media . -100111111 document
@@ -123,17 +127,23 @@ tg-tools upload-media . -100111111 document
 
 ### **3. Download de arquivos**
 
+Baixa todos os arquivos do chat id informado para a pasta atual.
+
 ```bash
 tg-tools download-media https://t.me/c/1000000/10 10 .
 ```
 
 ### **4. Download de vídeos**
 
+Baixa todos os vídeos do chat id informado para a pasta atual.
+
 ```bash
 tg-tools download-media https://t.me/c/1000000/10 10 . --media-type video
 ```
 
 ### **5. Copiar mensagens (bot)**
+
+Copia 10 mensagens do chat id de origem para o chat id de destino.
 
 ```bash
 tg-tools copy-messages https://t.me/c/1000000/10 10 -100111111
