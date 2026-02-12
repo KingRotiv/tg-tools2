@@ -7,7 +7,7 @@ from hydrogram.types import ForumTopic, Message
 from tg_tools.base_tg import BaseTG
 from tg_tools.config import console
 from tg_tools.exceptions import TGToolsError
-from tg_tools.utils import get_link_info, handle_floodwait
+from tg_tools.utils import caption_filters, get_link_info, handle_floodwait
 
 
 # -----------------------------
@@ -220,15 +220,11 @@ class Bot(BaseTG):
                         continue
 
                     # filtros
-                    if filter_caption_includes and msg.caption:
-                        if not any(
-                            f.lower() in msg.caption.lower()
-                            for f in filter_caption_includes
-                        ):
-                            console.log(
-                                f"[red]Caption não contém os filtros {filter_caption_includes} ({index + 1}/{total_message_ids})! ID: {msg.id}[/red]"
-                            )
-                            continue
+                    if not caption_filters(msg, filter_caption_includes):
+                        console.log(
+                            f"[red]Caption não contém os filtros {filter_caption_includes} ({index + 1}/{total_message_ids})! ID: {msg.id}[/red]"
+                        )
+                        continue
 
                     try:
                         response, skip = await handle_floodwait(
