@@ -11,6 +11,7 @@ from tg_tools.base_tg import BaseTG
 from tg_tools.config import console
 from tg_tools.exceptions import TGToolsError
 from tg_tools.utils import (
+    caption_filters,
     delete_file,
     format_size,
     get_link_info,
@@ -93,17 +94,6 @@ class Userbot(BaseTG):
             return base + sanitized
         else:
             return f"{base}{time.time()}.unknown"
-
-    def _caption_passes(self, msg: Message, filters: list[str] | None) -> bool:
-        if not filters:
-            return True
-        if not msg.caption:
-            return False
-        lower_caption = msg.caption.lower()
-        for f in filters:
-            if f.lower() in lower_caption:
-                return True
-        return False
 
     async def upload_media(
         self,
@@ -324,7 +314,7 @@ class Userbot(BaseTG):
                     target_path = self._build_target_path(path_verify, file_name)
 
                     # filtros por caption
-                    if not self._caption_passes(msg, filter_caption_includes):
+                    if not caption_filters(msg, filter_caption_includes):
                         console.log(
                             f"[red]Caption não contém os filtros {filter_caption_includes}! Mensagem: {msg.id}[/red]"
                         )

@@ -8,6 +8,7 @@ from typing import Callable
 
 import pathvalidate
 from hydrogram.errors.exceptions import FloodWait
+from hydrogram.types import Message
 from PIL import Image
 
 from tg_tools.config import console
@@ -183,3 +184,15 @@ async def handle_floodwait(func: Callable, *args, limit: int = 3, **kwargs):
             raise
 
     raise TGToolsError("Limite de FloodWait atingido!")
+
+
+def caption_filters(msg: Message, filters: list[str] | None) -> bool:
+    if not filters:
+        return True
+    if not msg.caption:
+        return False
+    lower_caption = msg.caption.lower()
+    for f in filters:
+        if f.lower() in lower_caption:
+            return True
+    return False
