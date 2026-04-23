@@ -34,7 +34,7 @@ pygments==2.19.2
     #   rich
 pysocks==1.7.1
     # via hydrogram
-pytest==9.0.2
+pytest==9.0.3
     # via
     #   tg-tools (pyproject.toml:dev)
     #   pytest-cov
