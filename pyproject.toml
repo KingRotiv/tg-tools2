@@ -31,4 +31,7 @@ build-backend = "hatchling.build"
 path = "src/tg_tools/version.py"
 
 [dependency-groups]
-dev = ["pytest>=8.4.2", "pytest-cov>=7.0.0"]
+dev = [
+    "pytest>=9.0.3",
+    "pytest-cov>=7.0.0",
+]
