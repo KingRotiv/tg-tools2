@@ -16,7 +16,7 @@ pyaes==1.6.1
     # via hydrogram
 pyfiglet==1.0.2
     # via tg-tools (pyproject.toml)
-pygments==2.19.1
+pygments==2.20.0
     # via rich
 pysocks==1.7.1
     # via hydrogram
