@@ -10,7 +10,7 @@ mdurl==0.1.2
     # via markdown-it-py
 pathvalidate==3.2.3
     # via tg-tools (pyproject.toml)
-pillow==12.1.1
+pillow==12.3.0
     # via tg-tools (pyproject.toml)
 pyaes==1.6.1
     # via hydrogram
