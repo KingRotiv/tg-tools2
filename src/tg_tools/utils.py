@@ -186,7 +186,7 @@ async def handle_floodwait(func: Callable, *args, limit: int = 3, **kwargs):
     raise TGToolsError("Limite de FloodWait atingido!")
 
 
-def caption_filters(msg: Message, filters: list[str] | None) -> bool:
+def caption_includes(msg: Message, filters: list[str] | None) -> bool:
     if not filters:
         return True
     if not msg.caption:

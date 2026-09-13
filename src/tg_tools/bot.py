@@ -7,7 +7,7 @@ from hydrogram.types import ForumTopic, Message
 from tg_tools.base_tg import BaseTG
 from tg_tools.config import console
 from tg_tools.exceptions import TGToolsError
-from tg_tools.utils import caption_filters, get_link_info, handle_floodwait
+from tg_tools.utils import caption_includes, get_link_info, handle_floodwait
 
 
 # -----------------------------
@@ -26,9 +26,24 @@ class Bot(BaseTG):
         "sticker",
     )
 
-    def __init__(self, api_id: str, api_hash: str, bot_token: str) -> None:
+    def __init__(
+        self,
+        api_id: str,
+        api_hash: str,
+        bot_token: str,
+        max_concurrent_transmissions: int | None = None,
+    ) -> None:
+        kwargs: dict[str, int] = {}
+        if max_concurrent_transmissions is not None:
+            kwargs["max_concurrent_transmissions"] = max_concurrent_transmissions
         super().__init__(
-            Client("bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
+            Client(
+                "bot",
+                api_id=api_id,
+                api_hash=api_hash,
+                bot_token=bot_token,
+                **kwargs,
+            )
         )
 
     async def verify_token(self) -> None:
@@ -220,7 +235,7 @@ class Bot(BaseTG):
                         continue
 
                     # filtros
-                    if not caption_filters(msg, filter_caption_includes):
+                    if not caption_includes(msg, filter_caption_includes):
                         console.log(
                             f"[red]Caption não contém os filtros {filter_caption_includes} ({index + 1}/{total_message_ids})! ID: {msg.id}[/red]"
                         )

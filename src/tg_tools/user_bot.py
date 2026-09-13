@@ -11,7 +11,7 @@ from tg_tools.base_tg import BaseTG
 from tg_tools.config import console
 from tg_tools.exceptions import TGToolsError
 from tg_tools.utils import (
-    caption_filters,
+    caption_includes,
     delete_file,
     format_size,
     get_link_info,
@@ -36,8 +36,17 @@ class Userbot(BaseTG):
         "document",
     )
 
-    def __init__(self, session_string: str) -> None:
-        super().__init__(Client("userbot", session_string=session_string))
+    def __init__(
+        self,
+        session_string: str,
+        max_concurrent_transmissions: int | None = None,
+    ) -> None:
+        kwargs: dict[str, int] = {}
+        if max_concurrent_transmissions is not None:
+            kwargs["max_concurrent_transmissions"] = max_concurrent_transmissions
+        super().__init__(
+            Client("userbot", session_string=session_string, **kwargs)
+        )
 
     @staticmethod
     async def create_session_string(api_id: int | str, api_hash: str) -> str:
@@ -314,7 +323,7 @@ class Userbot(BaseTG):
                     target_path = self._build_target_path(path_verify, file_name)
 
                     # filtros por caption
-                    if not caption_filters(msg, filter_caption_includes):
+                    if not caption_includes(msg, filter_caption_includes):
                         console.log(
                             f"[red]Caption não contém os filtros {filter_caption_includes}! Mensagem: {msg.id}[/red]"
                         )
