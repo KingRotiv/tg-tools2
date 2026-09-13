@@ -26,6 +26,7 @@ class CLI:
         "api-hash",
         "bot-token",
         "thumbnail",
+        "max-concurrent-transmissions",
     ]
 
     def __init__(self) -> None:
@@ -34,12 +35,22 @@ class CLI:
     def get(self, key: str) -> str | None:
         return self.db.get_config(key)
 
+    def get_max_concurrent_transmissions(self) -> int | None:
+        value = self.get("max-concurrent-transmissions")
+        return int(value) if value else None
+
     async def set(self, key: str, value: str) -> None:
         if key == "session-string":
             userbot = Userbot(value)
             await userbot.verify_session()
         if key == "thumbnail":
             value = file_thumbnail_to_base64(value)
+        if key == "max-concurrent-transmissions" and not (
+            value.isdigit() and int(value) > 0
+        ):
+            raise TGToolsError(
+                "max-concurrent-transmissions deve ser um número inteiro maior que 0."
+            )
         self.db.set_config(key, value)
 
     def remove(self, key: str) -> None:
@@ -344,7 +355,10 @@ async def init() -> None:
 
         if session_string := cli.get("session-string"):
             print_test_mode(args.test_mode)
-            userbot = Userbot(session_string)
+            userbot = Userbot(
+                session_string,
+                max_concurrent_transmissions=cli.get_max_concurrent_transmissions(),
+            )
             await userbot.verify_session()
 
             thumbnail = cli.get("thumbnail")
@@ -373,7 +387,10 @@ async def init() -> None:
 
         if session_string := cli.get("session-string"):
             print_test_mode(args.test_mode)
-            userbot = Userbot(session_string)
+            userbot = Userbot(
+                session_string,
+                max_concurrent_transmissions=cli.get_max_concurrent_transmissions(),
+            )
             await userbot.verify_session()
 
             await userbot.download_media(
@@ -403,7 +420,12 @@ async def init() -> None:
             and (bot_token := cli.get("bot-token"))
         ):
             print_test_mode(args.test_mode)
-            bot = Bot(api_id, api_hash=api_hash, bot_token=bot_token)
+            bot = Bot(
+                api_id,
+                api_hash=api_hash,
+                bot_token=bot_token,
+                max_concurrent_transmissions=cli.get_max_concurrent_transmissions(),
+            )
             await bot.verify_token()
 
             await bot.copy_messages(
